@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Product>McFisher</Product>
+    <AssemblyName>McFisher</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="old_jsons\**" />
+    <EmbeddedResource Remove="old_jsons\**" />
+    <None Remove="old_jsons\**" />
+    <Page Remove="old_jsons\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FftSharp" Version="1.1.6" />
+    <PackageReference Include="NAudio" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="ScottPlot.WinForms" Version="4.1.58" />
+    <PackageReference Include="ScreenCapturer" Version="3.0.0" />
+    <PackageReference Include="System.Windows.Extensions" Version="6.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+</Project>
