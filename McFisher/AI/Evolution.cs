@@ -60,7 +60,7 @@ public class Evolution
                     Generation = Config.Prototypes[0].Generation;
                     PopulateParents(ref parents, Config.Prototypes, Config.ThreadsCount);
                     parents.ForEach(p => p.Populate());
-                    parents.ForEach(p => p.ProcessTrainingData(Config));
+                    parents.ForEach(p => p.ProcessTraining(Config));
                     ErrorsCount = parents.Min(p => p.ErrorsCount);
                 }
                 else

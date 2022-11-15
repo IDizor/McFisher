@@ -24,5 +24,17 @@ public class Synapse
         ToNeuron = toNeuron;
         From = FromNeuron.Id;
         To = ToNeuron.Id;
+
+        fromNeuron.Outputs.Add(this);
+        toNeuron.Inputs.Add(this);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null) return false;
+
+        var synapse = (Synapse)obj;
+        return From == synapse.From
+            && To == synapse.To;
     }
 }

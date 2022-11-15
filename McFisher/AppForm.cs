@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http.Headers;
 using System.Windows.Input;
 using FftSharp;
 using McFisher.AI;
@@ -377,31 +376,31 @@ public partial class AppForm : Form
         }
     }
 
-    private TrainingSet? SelectTraining()
+    private TrainingSet? SelectTrainings()
     {
         TrainingSet? training = null;
 
-        do
+        openFileDialog1.Title = "Select Trainings";
+        openFileDialog1.Multiselect = true;
+        if (openFileDialog1.ShowDialog() != DialogResult.OK)
         {
-            openFileDialog1.Title = training == null ? "Select Training" : "Select additional Training";
-            if (openFileDialog1.ShowDialog() != DialogResult.OK)
-            {
-                return training;
-            }
+            return null;
+        }
 
-            var t = openFileDialog1.FileName.ParseJsonFile<TrainingSet>();
+        foreach (var f in openFileDialog1.FileNames)
+        {
+            var t = f.ParseJsonFile<TrainingSet>();
 
             if (training == null)
             {
                 training = t;
-                TrainingFileStatusLabel.Text = Path.GetFileName(openFileDialog1.FileName);
+                TrainingFileStatusLabel.Text = Path.GetFileName(f);
             }
             else
             {
                 training.Blocks.AddRange(t.Blocks);
             }
-            Application.DoEvents();
-        } while (Keyboard.IsKeyDown(Key.LeftShift));
+        }
 
         return training;
     }
@@ -418,7 +417,7 @@ public partial class AppForm : Form
 
             if (!Keyboard.IsKeyDown(Key.LeftShift) || Training == null)
             {
-                Training = SelectTraining();
+                Training = SelectTrainings();
                 if (Training == null)
                 {
                     GenerateCheckBox.Checked = false;
@@ -437,7 +436,7 @@ public partial class AppForm : Form
                 Training = Training,
                 ErrorsGoal = ErrorsGoalUpDown.IntValue(),
                 AcceptableErrorsThreshold = (float)GenErrorsThresholdUpDown.Value / 100,
-                NeuronsMemory = NeuronsMemoryUpDown.IntValue(),
+                NeuronsMemory = (float)NeuronsMemoryUpDown.Value,
                 FrequenciesPrevMax = FrequenciesPrevMaxUpDown.IntValue(),
             });
 
@@ -473,7 +472,7 @@ public partial class AppForm : Form
 
             if (!Keyboard.IsKeyDown(Key.LeftShift) || Training == null || BrainsComboBox.DataSource == null)
             {
-                Training = SelectTraining();
+                Training = SelectTrainings();
                 if (Training == null)
                 {
                     MutateCheckBox.Checked = false;
@@ -509,7 +508,7 @@ public partial class AppForm : Form
                 Prototypes = brains.ToList(),
                 ErrorsGoal = ErrorsGoalUpDown.IntValue(),
                 AcceptableErrorsThreshold = (float)GenErrorsThresholdUpDown.Value / 100,
-                NeuronsMemory = NeuronsMemoryUpDown.IntValue(),
+                NeuronsMemory = (float)NeuronsMemoryUpDown.Value,
                 FrequenciesPrevMax = FrequenciesPrevMaxUpDown.IntValue(),
             });
 
@@ -658,7 +657,6 @@ public partial class AppForm : Form
                 FrequenciesPrev.Enqueue(frequencies);
                 return;
             }
-
 
             if (frequenciesPrevMax > 0)
             {

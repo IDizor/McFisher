@@ -18,10 +18,12 @@ public class Mutator
 
     public static int SurvivalsTruncLimit { get; set; } = 100;
     private static float[] MutationTypeChances = {
-        0.32f,   // add neuron
-        0.55f,   // add synapse
+        0.40f,   // add neuron
+        0.30f,   // add synapse
         0.55f,   // mutate synapse
         0.06f,   // mutate neuron memory power
+        0.05f,   // remove synapse
+        0.12f,   // remove neuron
     };
 
     public static Mutator StartNew(AiBrain prototype, AiConfig config)
@@ -71,39 +73,41 @@ public class Mutator
 
                     for (int i = 0; i < mutationsCount; i++)
                     {
-                        if (mutant.SynapsesCount == 0)
+                        int mutationType = 0;
+                        int hiddenCount = mutant.Hidden.Count();
+                        do
                         {
-                            mutant.AddRandomSynapse(Config);
-                        }
-                        else
-                        {
-                            int mutationType = 1;
-                            int hiddenCount = mutant.Hidden.Count();
-                            do
-                            {
-                                mutationType = MutationTypeChances.GetRandomIndex();
-                            } while ((mutationType == 3 && hiddenCount == 0)
-                                  || (mutationType == 3 && Config.NeuronsMemory == 0f));
+                            mutationType = MutationTypeChances.GetRandomIndex();
+                        } while ((mutationType == 2 && mutant.SynapsesCount == 0)
+                                || (mutationType == 3 && hiddenCount == 0)
+                                || (mutationType == 3 && Config.NeuronsMemory == 0f)
+                                || (mutationType == 4 && mutant.SynapsesCount < 2)
+                                || (mutationType == 5 && hiddenCount < 2));
 
-                            switch (mutationType)
-                            {
-                                case 0:
-                                    mutant.AddRandomNeuron(Config);
-                                    break;
-                                case 1:
-                                    mutant.AddRandomSynapse(Config);
-                                    break;
-                                case 2:
-                                    mutant.MutateSynapse();
-                                    break;
-                                default:
-                                    mutant.MutateNeuron();
-                                    break;
-                            }
+                        switch (mutationType)
+                        {
+                            case 0:
+                                mutant.AddRandomNeuron(Config);
+                                break;
+                            case 1:
+                                mutant.AddRandomSynapse(Config);
+                                break;
+                            case 2:
+                                mutant.MutateSynapse();
+                                break;
+                            case 3:
+                                mutant.MutateNeuron();
+                                break;
+                            case 4:
+                                mutant.RemoveRandomSynapse();
+                                break;
+                            case 5:
+                                mutant.RemoveRandomHiddenNeuron();
+                                break;
                         }
                     }
 
-                    mutant.ProcessTrainingData(Config);
+                    mutant.ProcessTraining(Config);
                     MutatedTotal++;
 
                     // check errors and save best mutants

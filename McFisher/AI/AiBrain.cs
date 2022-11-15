@@ -137,16 +137,25 @@ public class AiBrain
         }
 
         // resolve
-        Neurons.Where(n => n.Layer > 0)
-            .OrderBy(n => n.Layer)
-            .ToList()
-            .ForEach(n => n.Resolve());
+        try
+        {
+            Neurons.Where(n => n.Layer > 0)
+                .OrderBy(n => n.Layer)
+                .ToList()
+                .ForEach(n => n.Resolve());
+        }
+        catch (Exception e)
+        {
+            this.SaveAsJsonPretty($"jsons\\errors\\{Neurons[0].Id}.json");
+            new Thread(() => MessageBox.Show(e.Message, "Error")).Start();
+            throw;
+        }
     }
 
     /// <summary>
     /// Processes the training data and sets <see cref="ErrorsCount"/>.
     /// </summary>
-    public AiBrain ProcessTrainingData(AiConfig config)
+    public AiBrain ProcessTraining(AiConfig config)
     {
         ErrorsCount = 0;
         var goalZone = false;
@@ -246,13 +255,9 @@ public class AiBrain
         Neurons.Add(newNeuron);
 
         // create synapses
-        newNeuron.Inputs.Add(new Synapse(fromNeuron1, newNeuron));
-        newNeuron.Inputs.Add(new Synapse(fromNeuron2, newNeuron));
-        newNeuron.Outputs.Add(new Synapse(newNeuron, toNeuron));
-
-        Synapses.Add(newNeuron.Inputs[0]);
-        Synapses.Add(newNeuron.Inputs[1]);
-        Synapses.Add(newNeuron.Outputs[0]);
+        Synapses.Add(new Synapse(fromNeuron1, newNeuron));
+        Synapses.Add(new Synapse(fromNeuron2, newNeuron));
+        Synapses.Add(new Synapse(newNeuron, toNeuron));
     }
 
     public void AddRandomSynapse(AiConfig config, int attemptsLimit = 1000)
@@ -286,17 +291,42 @@ public class AiBrain
         }
     }
 
-    public int RemoveWeakSynapses(float weaknessThreshold = 0.05f)
+    public void RemoveRandomHiddenNeuron()
     {
-        var weakSynapses = Synapses.Where(s => Math.Abs(s.Power) < weaknessThreshold).ToArray();
+        var hidden = Hidden.ToArray();
 
-        if (weakSynapses.Length > 0)
+        if (hidden.Length > 1)
         {
-            RemoveSynapses(weakSynapses);
-            RemoveUselessNeurons();
-        }
+            var neuronToRemove = hidden.RandomItem();
+            var tempClone = Clone();
 
-        return weakSynapses.Length;
+            tempClone.RemoveNeurons(tempClone.Neurons.Where(n => n.Id == neuronToRemove.Id));
+            tempClone.RemoveUselessNeurons();
+            if (tempClone.ResultNeuron.Inputs.Count > 0)
+            {
+                tempClone = null;
+                RemoveNeurons(new Neuron[] { neuronToRemove });
+                RemoveUselessNeurons();
+            }
+        }
+    }
+
+    public void RemoveRandomSynapse()
+    {
+        if (SynapsesCount > 1)
+        {
+            var synapseToRemove = Synapses.RandomItem();
+            var tempClone = Clone();
+
+            tempClone.RemoveSynapses(tempClone.Synapses.Where(s => s.Equals(synapseToRemove)));
+            tempClone.RemoveUselessNeurons();
+            if (tempClone.ResultNeuron.Inputs.Count > 0)
+            {
+                tempClone = null;
+                RemoveSynapses(new Synapse[] { synapseToRemove });
+                RemoveUselessNeurons();
+            }
+        }
     }
 
     private int GetRandomLayerForNewNeuron(int minLayer, int maxLayer)

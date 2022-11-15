@@ -10,6 +10,8 @@ public partial class AiDiagram : Form
     private Bitmap GraphBitmap;
     private Graphics Graph;
     private const int NeuronSize = 36;
+    private const int NeuronZoneSize = NeuronSize + 6;
+    private readonly Font NeuronFont = new Font(Form.DefaultFont.FontFamily, 12f);
 
     public AiBrain Brain;
 
@@ -35,42 +37,33 @@ public partial class AiDiagram : Form
 
             Brain = brain.Clone();
             Brain.Populate();
-            AiIdTextBox.Text = Brain.Synapses[0].From.ToString();
+            AiIdTextBox.Text = Brain.Neurons[0].Id.ToString();
             var neuronsLayers = new List<List<Neuron>>();
             for (int i = 0; i <= Brain.LastLayerIndex; i++)
             {
                 neuronsLayers.Add(Brain.Neurons.Where(n => n.Layer == i && (n.Outputs.Any() || n.Inputs.Any())).ToList());
             }
             
-            var neuronZoneSize = NeuronSize + 10;
-            var graphHeight = Math.Max(400, neuronsLayers.Max(l => l.Count + 1) * neuronZoneSize);
-
-            if (neuronsLayers.Max(l => l.Count) > 20)
-            {
-                graphHeight = (int)(graphHeight / 2f);
-            }
-
+            var graphHeight = Math.Max(400, neuronsLayers.Max(l => l.Count + 1) * NeuronZoneSize);
             var neuronOffsetsY = new List<int>();
             for (int i = 0; i < neuronsLayers.Count; i++)
             {
-                neuronOffsetsY.Add(AiTools.RandomInt(0, (int)(graphHeight / (neuronsLayers[i].Count + 1) / 2f)));
+                neuronOffsetsY.Add(AiTools.RandomInt(0, (int)(graphHeight / (neuronsLayers[i].Count + 1) / (i == 0 ? 4f : 2f))));
             }
 
             var neuronsLocations = new List<List<Point>>();
             for (int i = 0; i < neuronsLayers.Count; i++)
             {
-                bool zip = neuronsLayers[i].Count > 20;
                 neuronsLocations.Add(new());
                 for (int j = 0; j < neuronsLayers[i].Count; j++)
                 {
-                    int x = (neuronZoneSize * 3) + AiTools.RandomInt(0, neuronZoneSize / 3, true) + (i * neuronZoneSize * 2);
-                    x = !zip || j % 2 > 0 ? x : x - (NeuronSize * 2);
+                    int x = (NeuronZoneSize * 2) + AiTools.RandomInt(0, NeuronZoneSize / 3, true) + (i * NeuronZoneSize * 4);
                     int y = (graphHeight / (neuronsLayers[i].Count + 1)) * (j + 1) + AiTools.RandomInt(0, neuronOffsetsY[i], true);
                     neuronsLocations[i].Add(new(x, y));
                 }
             }
 
-            var graphWidth = neuronsLocations.Last().Max(p => p.X) + neuronZoneSize;
+            var graphWidth = neuronsLocations.Last().Max(p => p.X) + NeuronZoneSize;
 
             if (WindowState != FormWindowState.Maximized)
             {
@@ -108,6 +101,13 @@ public partial class AiDiagram : Form
                 }
             }
 
+            // resize if needed
+            if (GraphBitmap.Height > 900 || GraphBitmap.Width > 1900)
+            {
+                var x = Math.Min(900f / GraphBitmap.Height, 1900f / GraphBitmap.Width);
+                GraphBitmap = new Bitmap(GraphBitmap, new Size((int)(GraphBitmap.Width * x), (int)(GraphBitmap.Height * x)));
+            }
+
             // show graph
             DrawPanel.BackgroundImage = GraphBitmap;
         }
@@ -128,7 +128,7 @@ public partial class AiDiagram : Form
             var sf = new StringFormat();
             sf.LineAlignment = StringAlignment.Center;
             sf.Alignment = StringAlignment.Center;
-            Graph.DrawString(text, Font, Brushes.Black, new Point(x, y+1), sf);
+            Graph.DrawString(text, NeuronFont, Brushes.Black, new Point(x, y + 1), sf);
         }
     }
 
@@ -139,6 +139,6 @@ public partial class AiDiagram : Form
             : Color.LightSkyBlue;
         power = Math.Abs(power) * 3;
 
-        Graph.DrawLine(new(color, power), x1, y1, x2, y2);
+        Graph.DrawLine(new(Color.FromArgb(128, color), power), x1, y1, x2, y2);
     }
 }
