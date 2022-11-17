@@ -13,5 +13,5 @@ public class AiConfig
     public int ErrorsGoal { get; set; } = 5;
     public float AcceptableErrorsThreshold { get; set; } = 0.01f;
     public float NeuronsMemory { get; set; } = 0.7f;
-    public int FrequenciesPrevMax { get; set; } = 0;
+    public int FrequenciesBlocksToUse { get; set; } = 0;
 }

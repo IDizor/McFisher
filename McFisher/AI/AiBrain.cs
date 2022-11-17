@@ -108,7 +108,7 @@ public class AiBrain
         }
     }
 
-    public void ProcessSignals(float[] signals1, float[] signals2)
+    public void ProcessSignals(float[] signals)
     {
         // put signals into perceptrons
         for (int i = 0; i < PerceptronsCount; i++)
@@ -118,21 +118,13 @@ public class AiBrain
                 throw new Exception("Too many signals to process. Not enough perceptrons in this AI.");
             }
 
-            if (i < signals1.Length)
+            if (i < signals.Length)
             {
-                Neurons[i].SetResult(signals1[i]);
+                Neurons[i].SetResult(signals[i]);
             }
             else
             {
-                int j = i - signals1.Length;
-                if (signals2 != null && j < signals2.Length)
-                {
-                    Neurons[i].SetResult(signals2[j]);
-                }
-                else
-                {
-                    break;
-                }
+                break;
             }
         }
 
@@ -160,10 +152,21 @@ public class AiBrain
         ErrorsCount = 0;
         var goalZone = false;
         var goalZoneAlreadyHit = false;
+        var frequencies = new List<float[]>();
 
         // process training data
-        for (int i = config.FrequenciesPrevMax; i < config.Training.Blocks.Count; i++)
+        for (int i = 0; i < config.Training.Blocks.Count; i++)
         {
+            frequencies.Insert(0, config.Training.Blocks[i].Values);
+
+            if (frequencies.Count <= config.FrequenciesBlocksToUse)
+            {
+                continue;
+            }
+
+            frequencies.RemoveAt(frequencies.Count - 1);
+            var signals = frequencies.SelectMany(f => f).ToArray();
+
             // track goal zone
             if (goalZone)
             {
@@ -182,16 +185,7 @@ public class AiBrain
                 }
             }
 
-            // process signals
-            if (config.FrequenciesPrevMax > 0)
-            {
-                ProcessSignals(config.Training.Blocks[i].Values, config.Training.Blocks[i - config.FrequenciesPrevMax].Values);
-            }
-            else
-            {
-                ProcessSignals(config.Training.Blocks[i].Values, null);
-            }
-            
+            ProcessSignals(signals);
 
             if (goalZone)
             {
@@ -342,7 +336,7 @@ public class AiBrain
     private Neuron GetRandomNeuron(int layer, AiConfig? config = null)
     {
         return layer == 0 && config != null
-            ? Neurons[config.Training.GetRandomSynapseIndex(config.FrequenciesPrevMax > 0)]
+            ? Neurons[config.Training.GetRandomSynapseIndex(config.FrequenciesBlocksToUse)]
             : Neurons.Where(n => n.Layer == layer).ToList().RandomItem();
     }
 

@@ -24,7 +24,8 @@ public partial class AppForm : Form
 
     double[]? AudioValues;
     double[]? FftValues;
-    Queue<float[]> FrequenciesPrev = new();
+    List<float[]> FrequenciesBlocks = new();
+    int FrequenciesBlocksToUse = 1;
     float SignalMultiplier = 1;
     int RodTimerInterval = 2000;
     bool NoPlot = true;
@@ -437,7 +438,7 @@ public partial class AppForm : Form
                 ErrorsGoal = ErrorsGoalUpDown.IntValue(),
                 AcceptableErrorsThreshold = (float)GenErrorsThresholdUpDown.Value / 100,
                 NeuronsMemory = (float)NeuronsMemoryUpDown.Value,
-                FrequenciesPrevMax = FrequenciesPrevMaxUpDown.IntValue(),
+                FrequenciesBlocksToUse = BlocksToUseUpDown.IntValue(),
             });
 
             SetProcessPriority(ProcessPriorityClass.BelowNormal);
@@ -509,7 +510,7 @@ public partial class AppForm : Form
                 ErrorsGoal = ErrorsGoalUpDown.IntValue(),
                 AcceptableErrorsThreshold = (float)GenErrorsThresholdUpDown.Value / 100,
                 NeuronsMemory = (float)NeuronsMemoryUpDown.Value,
-                FrequenciesPrevMax = FrequenciesPrevMaxUpDown.IntValue(),
+                FrequenciesBlocksToUse = BlocksToUseUpDown.IntValue(),
             });
 
             SetProcessPriority(ProcessPriorityClass.BelowNormal);
@@ -584,7 +585,8 @@ public partial class AppForm : Form
     private void StartFishingMonitoring()
     {
         NoPlot = true;
-        FrequenciesPrev.Clear();
+        FrequenciesBlocks.Clear();
+        FrequenciesBlocksToUse = BlocksToUseUpDown.IntValue();
         SystemWave = new SystemAudioCapture(BufferMilliseconds);
         SystemWave.DataAvailable += DataAvailable;
         SystemWave.RecordingStopped += (s, a) =>
@@ -650,23 +652,20 @@ public partial class AppForm : Form
         if (SelectedBrain != null)
         {
             var frequencies = CalcFrequencyRangesValues();
-            var frequenciesPrevMax = FrequenciesPrevMaxUpDown.IntValue();
+            FrequenciesBlocks.Insert(0, frequencies);
 
-            if (FrequenciesPrev.Count < frequenciesPrevMax)
+            if (FrequenciesBlocks.Count < FrequenciesBlocksToUse)
             {
-                FrequenciesPrev.Enqueue(frequencies);
                 return;
             }
 
-            if (frequenciesPrevMax > 0)
+            while (FrequenciesBlocks.Count > FrequenciesBlocksToUse)
             {
-                SelectedBrain.ProcessSignals(frequencies, FrequenciesPrev.Dequeue());
-                FrequenciesPrev.Enqueue(frequencies);
+                FrequenciesBlocks.RemoveAt(FrequenciesBlocks.Count - 1);
             }
-            else
-            {
-                SelectedBrain.ProcessSignals(frequencies, null);
-            }
+
+            var signals = FrequenciesBlocks.SelectMany(f => f).ToArray();
+            SelectedBrain.ProcessSignals(signals);
             
             if (SelectedBrain.Result)
             {
@@ -955,6 +954,7 @@ public partial class AppForm : Form
         if (BrainsComboBox.SelectedIndex > -1 && BrainsComboBox.SelectedItem != null)
         {
             SelectedBrain = (AiBrain)BrainsComboBox.SelectedItem;
+            BlocksToUseUpDown.Value = (int)(SelectedBrain.PerceptronsCount / FrequencyRanges.Length);
             if (DiagramForm.Visible)
             {
                 DiagramForm.DrawAi(SelectedBrain);
@@ -987,12 +987,19 @@ public partial class AppForm : Form
         }
     }
 
-    private void MainPanel_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+    private void BrainsComboBox_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
     {
-        DiagramForm.Show();
+        if (e.Button == MouseButtons.Right)
+        {
+            if (!DiagramForm.Visible && SelectedBrain != null)
+            {
+                DiagramForm.Show();
+                DiagramForm.DrawAi(SelectedBrain);
+            }
+        }
     }
 
-    private void DiagramButton_Click(object sender, EventArgs e)
+    private void ErrorsCountLabel_Click(object sender, EventArgs e)
     {
         if (!DiagramForm.Visible && BestEvolutionBrain != null)
         {
@@ -1001,14 +1008,23 @@ public partial class AppForm : Form
         }
     }
 
-    private void BrainsComboBox_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+    static int static_Height = 0;
+    private void MainPanel_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
     {
         if (e.Button == MouseButtons.Right)
         {
-            if (SelectedBrain != null)
+            if (static_Height == 0)
             {
-                DiagramForm.Show();
-                DiagramForm.DrawAi(SelectedBrain);
+                if (SettingsPanel.Height > 0)
+                {
+                    static_Height = Height;
+                    Height -= SettingsPanel.Height;
+                }
+            }
+            else
+            {
+                Height = static_Height;
+                static_Height = 0;
             }
         }
     }

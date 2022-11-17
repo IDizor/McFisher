@@ -13,7 +13,7 @@ internal class Settings
     public int FishingTimeout { get; set; } = 40;
     public int SignalMultiplier { get; set; } = 100;
     public bool CheckLookIntoWater { get; set; } = true;
-    public int FrequenciesPrevMax { get; set; } = 0;
+    public int FrequenciesBlocksToUse { get; set; } = 1;
     public int ErrorsGoal { get; set; } = 10;
     public int ThreadsCount { get; set; } = 5;
     public int Momentum { get; set; } = 500;
@@ -46,7 +46,7 @@ internal class Settings
         FishingTimeout = MainForm.FishingTimeoutUpDown.IntValue();
         SignalMultiplier = MainForm.SignalMultiplierUpDown.IntValue();
         CheckLookIntoWater = MainForm.LookIntoWaterCheckBox.Checked;
-        FrequenciesPrevMax = MainForm.FrequenciesPrevMaxUpDown.IntValue();
+        FrequenciesBlocksToUse = MainForm.BlocksToUseUpDown.IntValue();
         ErrorsGoal = MainForm.ErrorsGoalUpDown.IntValue();
         ThreadsCount = MainForm.ThreadsUpDown.IntValue();
         Momentum = MainForm.MomentumUpDown.IntValue();
@@ -63,7 +63,7 @@ internal class Settings
         MainForm.FishingTimeoutUpDown.Value = FishingTimeout;
         MainForm.SignalMultiplierUpDown.Value = SignalMultiplier;
         MainForm.LookIntoWaterCheckBox.Checked = CheckLookIntoWater;
-        MainForm.FrequenciesPrevMaxUpDown.Value = FrequenciesPrevMax;
+        MainForm.BlocksToUseUpDown.Value = FrequenciesBlocksToUse;
         MainForm.ErrorsGoalUpDown.Value = ErrorsGoal;
         MainForm.ThreadsUpDown.Value = ThreadsCount;
         MainForm.MomentumUpDown.Value = Momentum;

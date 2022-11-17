@@ -78,27 +78,27 @@ public class TrainingSet
         }
     }
 
-    public int GetRandomSynapseIndex(bool isDoubleBlockSize)
+    public int GetRandomSynapseIndex(int blocksToUse)
     {
         lock (_chansesLock)
         {
             if (_chancesSource == null)
             {
-                _chancesSource = isDoubleBlockSize
-                    ? new float[BlockSize * 2]
-                    : new float[BlockSize];
-
+                var blockChances = new float[BlockSize];
+                
                 // select maximums
                 foreach (var block in Blocks)
                 {
                     for (int i = 0; i < BlockSize; i++)
                     {
-                        _chancesSource[i] = Math.Max(_chancesSource[i], block.Values[i]);
-                        if (isDoubleBlockSize)
-                        {
-                            _chancesSource[BlockSize + i] = _chancesSource[i];
-                        }
+                        blockChances[i] = Math.Max(blockChances[i], block.Values[i]);
                     }
+                }
+
+                _chancesSource = new float[BlockSize * blocksToUse];
+                for (int i = 0; i < blocksToUse; i++)
+                {
+                    Array.Copy(blockChances, 0, _chancesSource, i * BlockSize, BlockSize);
                 }
 
                 // sum sequence

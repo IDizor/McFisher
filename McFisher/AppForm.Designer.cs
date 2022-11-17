@@ -39,7 +39,7 @@ partial class AppForm
             this.OptionsPanel = new System.Windows.Forms.Panel();
             this.GenPopLimitUpDown = new System.Windows.Forms.NumericUpDown();
             this.NeuronsMemoryUpDown = new System.Windows.Forms.NumericUpDown();
-            this.FrequenciesPrevMaxUpDown = new System.Windows.Forms.NumericUpDown();
+            this.BlocksToUseUpDown = new System.Windows.Forms.NumericUpDown();
             this.GenErrorsThresholdUpDown = new System.Windows.Forms.NumericUpDown();
             this.label14 = new System.Windows.Forms.Label();
             this.ThreadsUpDown = new System.Windows.Forms.NumericUpDown();
@@ -62,7 +62,6 @@ partial class AppForm
             this.GoCheckBox = new System.Windows.Forms.CheckBox();
             this.BrainsComboBox = new System.Windows.Forms.ComboBox();
             this.MainPanel = new System.Windows.Forms.Panel();
-            this.DiagramButton = new System.Windows.Forms.Button();
             this.HitLabel = new System.Windows.Forms.Label();
             this.GenerationLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -89,7 +88,7 @@ partial class AppForm
             this.OptionsPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GenPopLimitUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.NeuronsMemoryUpDown)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FrequenciesPrevMaxUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BlocksToUseUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GenErrorsThresholdUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThreadsUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FishingTimeoutUpDown)).BeginInit();
@@ -148,7 +147,7 @@ partial class AppForm
             // 
             this.OptionsPanel.Controls.Add(this.GenPopLimitUpDown);
             this.OptionsPanel.Controls.Add(this.NeuronsMemoryUpDown);
-            this.OptionsPanel.Controls.Add(this.FrequenciesPrevMaxUpDown);
+            this.OptionsPanel.Controls.Add(this.BlocksToUseUpDown);
             this.OptionsPanel.Controls.Add(this.GenErrorsThresholdUpDown);
             this.OptionsPanel.Controls.Add(this.label14);
             this.OptionsPanel.Controls.Add(this.ThreadsUpDown);
@@ -222,17 +221,22 @@ partial class AppForm
             0,
             65536});
             // 
-            // FrequenciesPrevMaxUpDown
+            // BlocksToUseUpDown
             // 
-            this.FrequenciesPrevMaxUpDown.Location = new System.Drawing.Point(0, 71);
-            this.FrequenciesPrevMaxUpDown.Maximum = new decimal(new int[] {
-            5,
+            this.BlocksToUseUpDown.Location = new System.Drawing.Point(0, 71);
+            this.BlocksToUseUpDown.Maximum = new decimal(new int[] {
+            50,
             0,
             0,
             0});
-            this.FrequenciesPrevMaxUpDown.Name = "FrequenciesPrevMaxUpDown";
-            this.FrequenciesPrevMaxUpDown.Size = new System.Drawing.Size(149, 23);
-            this.FrequenciesPrevMaxUpDown.TabIndex = 16;
+            this.BlocksToUseUpDown.Name = "BlocksToUseUpDown";
+            this.BlocksToUseUpDown.Size = new System.Drawing.Size(149, 23);
+            this.BlocksToUseUpDown.TabIndex = 16;
+            this.BlocksToUseUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // GenErrorsThresholdUpDown
             // 
@@ -354,9 +358,9 @@ partial class AppForm
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(0, 55);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(123, 15);
+            this.label5.Size = new System.Drawing.Size(102, 15);
             this.label5.TabIndex = 8;
-            this.label5.Text = "Use prev signals block";
+            this.label5.Text = "Use signals blocks";
             // 
             // GameTitleTextBox
             // 
@@ -501,7 +505,6 @@ partial class AppForm
             // 
             // MainPanel
             // 
-            this.MainPanel.Controls.Add(this.DiagramButton);
             this.MainPanel.Controls.Add(this.HitLabel);
             this.MainPanel.Controls.Add(this.GenerationLabel);
             this.MainPanel.Controls.Add(this.label1);
@@ -522,17 +525,6 @@ partial class AppForm
             this.MainPanel.Size = new System.Drawing.Size(338, 75);
             this.MainPanel.TabIndex = 22;
             this.MainPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainPanel_MouseClick);
-            // 
-            // DiagramButton
-            // 
-            this.DiagramButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.DiagramButton.Location = new System.Drawing.Point(85, 55);
-            this.DiagramButton.Name = "DiagramButton";
-            this.DiagramButton.Size = new System.Drawing.Size(67, 20);
-            this.DiagramButton.TabIndex = 37;
-            this.DiagramButton.Text = "Diagram";
-            this.DiagramButton.UseVisualStyleBackColor = true;
-            this.DiagramButton.Click += new System.EventHandler(this.DiagramButton_Click);
             // 
             // HitLabel
             // 
@@ -655,12 +647,14 @@ partial class AppForm
             // ErrorsCountLabel
             // 
             this.ErrorsCountLabel.AutoSize = true;
+            this.ErrorsCountLabel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ErrorsCountLabel.Location = new System.Drawing.Point(229, 55);
             this.ErrorsCountLabel.Name = "ErrorsCountLabel";
             this.ErrorsCountLabel.Padding = new System.Windows.Forms.Padding(1, 0, 0, 0);
             this.ErrorsCountLabel.Size = new System.Drawing.Size(14, 15);
             this.ErrorsCountLabel.TabIndex = 27;
             this.ErrorsCountLabel.Text = "0";
+            this.ErrorsCountLabel.Click += new System.EventHandler(this.ErrorsCountLabel_Click);
             // 
             // SurvivalsLabel
             // 
@@ -772,7 +766,7 @@ partial class AppForm
             this.OptionsPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GenPopLimitUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.NeuronsMemoryUpDown)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.FrequenciesPrevMaxUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BlocksToUseUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GenErrorsThresholdUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThreadsUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FishingTimeoutUpDown)).EndInit();
@@ -844,6 +838,5 @@ partial class AppForm
     public NumericUpDown NeuronsMemoryUpDown;
     private Label label14;
     public CheckBox ShowLiveCheckBox;
-    public NumericUpDown FrequenciesPrevMaxUpDown;
-    private Button DiagramButton;
+    public NumericUpDown BlocksToUseUpDown;
 }

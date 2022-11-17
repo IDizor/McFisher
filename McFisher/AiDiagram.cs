@@ -137,8 +137,8 @@ public partial class AiDiagram : Form
         var color = power > 0
             ? Color.Orange
             : Color.LightSkyBlue;
-        power = Math.Abs(power) * 3;
+        var width = Math.Abs(power) * 5;
 
-        Graph.DrawLine(new(Color.FromArgb(128, color), power), x1, y1, x2, y2);
+        Graph.DrawLine(new(Color.FromArgb(128, color), width), x1, y1, x2, y2);
     }
 }

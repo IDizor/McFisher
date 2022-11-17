@@ -67,7 +67,7 @@ public class Mutator
                 {
                     var mutant = hasPrototype
                         ? Prototype.Clone()
-                        : AiBrain.CreateEmptyBrain(Config.Training.BlockSize * (Config.FrequenciesPrevMax > 0 ? 2 : 1));
+                        : AiBrain.CreateEmptyBrain(Config.Training.BlockSize * Config.FrequenciesBlocksToUse);
 
                     mutant.NeuronsMemory = Config.NeuronsMemory;
 
