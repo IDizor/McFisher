@@ -32,6 +32,29 @@ public static class Extensions
         return (int)upDown.Value;
     }
 
+    public static void FixInputFieldsSize(this Control control)
+    {
+        if (control is TextBox textBox)
+        {
+            if (!textBox.Multiline && textBox.Font.FontFamily.Name == "Segoe UI" && textBox.Font.Size == 9f)
+            {
+                //textBox.AutoSize = false;
+                //textBox.Height = 21;
+                textBox.Font = new Font("Trebuchet MS", 10f, FontStyle.Regular);
+            }
+        }
+        else if (control is NumericUpDown upDown)
+        {
+            upDown.BorderStyle = BorderStyle.None;
+            upDown.Font = new Font("Microsoft YaHei UI", 10f, FontStyle.Regular);
+        }
+
+        foreach (Control c in control.Controls)
+        {
+            FixInputFieldsSize(c);
+        }
+    }
+
     public static T RandomItem<T>(this IList<T> list)
     {
         return list[AiTools.RandomInt(0, list.Count - 1)];

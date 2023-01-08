@@ -37,21 +37,18 @@ public static class AiTools
         return limit == 0d ? 0d : R.NextDouble() * limit;
     }
 
-    public static int RandomMutationsCount(int synapseCount, int errorsCount)
+    public static int RandomMutationsCount(int synapsesCount, int errorsCount)
     {
-        // Excel formula: =2+ROUND((($B3^0.3)/4)*(C$2/800 + 1)+(C$2/800);0)
-        //float sc = synapseCount / 800f;
-        //int count = 2 + (int)Math.Round(Math.Pow(errorsCount, 0.3) / 4 * (sc + 1) + sc);
-        //float sc = synapseCount / 500f;
-        //int count = 1 + (int)Math.Round(Math.Pow(errorsCount, 0.5) / 10 * (sc + 1) + sc);
-
-        int count = (int)(Math.Pow(errorsCount, 0.18) + Math.Pow(synapseCount, 0.25));
-
-        // randomize
-        int deviation = (int)Math.Max(count / 7f, 1f);
-        int result = RandomInt(Math.Max(count - deviation, 1), count + deviation);
+        int maxCount = MutationsMaxCount(synapsesCount, errorsCount);
+        int result = RandomInt(2, Math.Max(3, maxCount));
 
         return result;
+    }
+
+    public static int MutationsMaxCount(int synapsesCount, int errorsCount)
+    {
+        var maxCount = (int)(Math.Pow(errorsCount, 0.25) + Math.Pow(synapsesCount, 0.4));
+        return maxCount;
     }
 
     // Excel formula: =MAX(1;ROUND((5000-InitialErrorsCount)/1000;0))

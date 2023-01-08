@@ -62,6 +62,7 @@ partial class AppForm
             this.GoCheckBox = new System.Windows.Forms.CheckBox();
             this.BrainsComboBox = new System.Windows.Forms.ComboBox();
             this.MainPanel = new System.Windows.Forms.Panel();
+            this.FinalizeCheckBox = new System.Windows.Forms.CheckBox();
             this.HitLabel = new System.Windows.Forms.Label();
             this.GenerationLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -364,6 +365,7 @@ partial class AppForm
             // 
             // GameTitleTextBox
             // 
+            this.GameTitleTextBox.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.GameTitleTextBox.Location = new System.Drawing.Point(170, 24);
             this.GameTitleTextBox.Name = "GameTitleTextBox";
             this.GameTitleTextBox.Size = new System.Drawing.Size(150, 23);
@@ -419,6 +421,8 @@ partial class AppForm
             // 
             // MomentumUpDown
             // 
+            this.MomentumUpDown.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.MomentumUpDown.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.MomentumUpDown.Location = new System.Drawing.Point(170, 115);
             this.MomentumUpDown.Maximum = new decimal(new int[] {
             100000,
@@ -505,6 +509,7 @@ partial class AppForm
             // 
             // MainPanel
             // 
+            this.MainPanel.Controls.Add(this.FinalizeCheckBox);
             this.MainPanel.Controls.Add(this.HitLabel);
             this.MainPanel.Controls.Add(this.GenerationLabel);
             this.MainPanel.Controls.Add(this.label1);
@@ -525,6 +530,19 @@ partial class AppForm
             this.MainPanel.Size = new System.Drawing.Size(338, 75);
             this.MainPanel.TabIndex = 22;
             this.MainPanel.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MainPanel_MouseClick);
+            // 
+            // FinalizeCheckBox
+            // 
+            this.FinalizeCheckBox.AutoSize = true;
+            this.FinalizeCheckBox.Enabled = false;
+            this.FinalizeCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.FinalizeCheckBox.Location = new System.Drawing.Point(268, 21);
+            this.FinalizeCheckBox.Name = "FinalizeCheckBox";
+            this.FinalizeCheckBox.Size = new System.Drawing.Size(62, 19);
+            this.FinalizeCheckBox.TabIndex = 37;
+            this.FinalizeCheckBox.Text = "Finalize";
+            this.FinalizeCheckBox.UseVisualStyleBackColor = true;
+            this.FinalizeCheckBox.CheckedChanged += new System.EventHandler(this.FinalizeCheckBox_CheckedChanged);
             // 
             // HitLabel
             // 
@@ -839,4 +857,5 @@ partial class AppForm
     private Label label14;
     public CheckBox ShowLiveCheckBox;
     public NumericUpDown BlocksToUseUpDown;
+    private CheckBox FinalizeCheckBox;
 }

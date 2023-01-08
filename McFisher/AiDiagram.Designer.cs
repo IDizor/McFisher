@@ -29,6 +29,7 @@ partial class AiDiagram
     private void InitializeComponent()
     {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.InfoLabel = new System.Windows.Forms.Label();
             this.AiIdTextBox = new System.Windows.Forms.TextBox();
             this.RedrawButton = new System.Windows.Forms.Button();
             this.DrawPanel = new System.Windows.Forms.Panel();
@@ -37,20 +38,29 @@ partial class AiDiagram
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.InfoLabel);
             this.panel1.Controls.Add(this.AiIdTextBox);
             this.panel1.Controls.Add(this.RedrawButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1111, 23);
+            this.panel1.Size = new System.Drawing.Size(1111, 25);
             this.panel1.TabIndex = 2;
+            // 
+            // InfoLabel
+            // 
+            this.InfoLabel.AutoSize = true;
+            this.InfoLabel.Location = new System.Drawing.Point(352, 5);
+            this.InfoLabel.Name = "InfoLabel";
+            this.InfoLabel.Size = new System.Drawing.Size(28, 15);
+            this.InfoLabel.TabIndex = 4;
+            this.InfoLabel.Text = "Info";
             // 
             // AiIdTextBox
             // 
-            this.AiIdTextBox.AutoSize = false;
-            this.AiIdTextBox.Location = new System.Drawing.Point(81, 2);
+            this.AiIdTextBox.Location = new System.Drawing.Point(81, 1);
             this.AiIdTextBox.Name = "AiIdTextBox";
-            this.AiIdTextBox.Size = new System.Drawing.Size(293, 21);
+            this.AiIdTextBox.Size = new System.Drawing.Size(265, 23);
             this.AiIdTextBox.TabIndex = 3;
             this.AiIdTextBox.Text = "id";
             // 
@@ -58,7 +68,7 @@ partial class AiDiagram
             // 
             this.RedrawButton.Location = new System.Drawing.Point(0, 0);
             this.RedrawButton.Name = "RedrawButton";
-            this.RedrawButton.Size = new System.Drawing.Size(75, 23);
+            this.RedrawButton.Size = new System.Drawing.Size(75, 25);
             this.RedrawButton.TabIndex = 2;
             this.RedrawButton.Text = "Redraw";
             this.RedrawButton.UseVisualStyleBackColor = true;
@@ -69,9 +79,9 @@ partial class AiDiagram
             this.DrawPanel.BackColor = System.Drawing.SystemColors.Control;
             this.DrawPanel.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.DrawPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.DrawPanel.Location = new System.Drawing.Point(0, 23);
+            this.DrawPanel.Location = new System.Drawing.Point(0, 25);
             this.DrawPanel.Name = "DrawPanel";
-            this.DrawPanel.Size = new System.Drawing.Size(1111, 590);
+            this.DrawPanel.Size = new System.Drawing.Size(1111, 588);
             this.DrawPanel.TabIndex = 3;
             // 
             // AiDiagram
@@ -81,7 +91,7 @@ partial class AiDiagram
             this.ClientSize = new System.Drawing.Size(1111, 613);
             this.Controls.Add(this.DrawPanel);
             this.Controls.Add(this.panel1);
-            this.MinimumSize = new System.Drawing.Size(500, 0);
+            this.MinimumSize = new System.Drawing.Size(600, 0);
             this.Name = "AiDiagram";
             this.Text = "AiDiagram";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AiDiagram_FormClosing);
@@ -97,4 +107,5 @@ partial class AiDiagram
     private Button RedrawButton;
     private Panel DrawPanel;
     private TextBox AiIdTextBox;
+    private Label InfoLabel;
 }

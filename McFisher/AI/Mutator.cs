@@ -16,11 +16,11 @@ public class Mutator
     public ConcurrentBag<AiBrain> Survivals = new ConcurrentBag<AiBrain>();
     public AiBrain? BestMutant { get; private set; } = null;
 
-    public static int SurvivalsTruncLimit { get; set; } = 100;
+    public static int SurvivalsTruncLimit { get; set; } = 20;
     private static float[] MutationTypeChances = {
         0.40f,   // add neuron
-        0.30f,   // add synapse
-        0.55f,   // mutate synapse
+        0.40f,   // add synapse
+        0.80f,   // mutate synapse
         0.06f,   // mutate neuron memory power
         0.05f,   // remove synapse
         0.12f,   // remove neuron
@@ -58,10 +58,6 @@ public class Mutator
                 InitialErrorsCount = hasPrototype ? Prototype.ErrorsCount : int.MaxValue;
                 ErrorsCount = InitialErrorsCount;
 
-                var mutationsCount = hasPrototype
-                    ? AiTools.RandomMutationsCount(Prototype.SynapsesCount, Prototype.ErrorsCount)
-                    : 2;
-
                 Running = true;
                 while (Running)
                 {
@@ -70,6 +66,10 @@ public class Mutator
                         : AiBrain.CreateEmptyBrain(Config.Training.BlockSize * Config.FrequenciesBlocksToUse);
 
                     mutant.NeuronsMemory = Config.NeuronsMemory;
+                    
+                    var mutationsCount = hasPrototype
+                        ? AiTools.RandomMutationsCount(Prototype.SynapsesCount, Prototype.ErrorsCount)
+                        : 3;
 
                     for (int i = 0; i < mutationsCount; i++)
                     {

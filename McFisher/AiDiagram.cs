@@ -1,6 +1,7 @@
 ﻿using System.Drawing.Drawing2D;
 using System.Drawing.Text;
 using McFisher.AI;
+using McFisher.Training;
 
 namespace McFisher;
 
@@ -18,6 +19,7 @@ public partial class AiDiagram : Form
     public AiDiagram()
     {
         InitializeComponent();
+        this.FixInputFieldsSize();
     }
 
     private void AiDiagram_FormClosing(object sender, FormClosingEventArgs e)
@@ -38,6 +40,7 @@ public partial class AiDiagram : Form
             Brain = brain.Clone();
             Brain.Populate();
             AiIdTextBox.Text = Brain.Neurons[0].Id.ToString();
+            InfoLabel.Text = $"Syn / Err / MutMax : {Brain.SynapsesCount} / {Brain.ErrorsCount} / {AiTools.MutationsMaxCount(Brain.SynapsesCount, Brain.ErrorsCount)}";
             var neuronsLayers = new List<List<Neuron>>();
             for (int i = 0; i <= Brain.LastLayerIndex; i++)
             {

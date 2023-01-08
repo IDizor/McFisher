@@ -1,5 +1,4 @@
-﻿using McFisher.Training;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace McFisher.AI;
 

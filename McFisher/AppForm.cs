@@ -141,6 +141,7 @@ public partial class AppForm : Form
     public AppForm()
     {
         InitializeComponent();
+        this.FixInputFieldsSize();
 
         foreach (var control in MainPanel.Controls)
         {
@@ -184,12 +185,32 @@ public partial class AppForm : Form
 
     private void AnyMainCheckBox_CheckedChanged(object sender, EventArgs e)
     {
+        var ignoreCheckboxes = new CheckBox[] {
+            FinalizeCheckBox,
+        };
+
+        if (ignoreCheckboxes.Contains(sender))
+        {
+            return;
+        }
+
         // disable other checkboxes on the main panel
         foreach (var control in MainPanel.Controls)
         {
             if (control != sender && control is CheckBox checkbox)
             {
-                checkbox.Enabled = !((CheckBox)sender).Checked;
+                if (checkbox == FinalizeCheckBox && (sender == GenerateCheckBox || sender == MutateCheckBox))
+                {
+                    checkbox.Enabled = ((CheckBox)sender).Checked;
+                    checkbox.Checked = false;
+                }
+                else
+                {
+                    if (!ignoreCheckboxes.Contains(checkbox))
+                    {
+                        checkbox.Enabled = !((CheckBox)sender).Checked;
+                    }
+                }
             }
         }
     }
@@ -1026,6 +1047,14 @@ public partial class AppForm : Form
                 Height = static_Height;
                 static_Height = 0;
             }
+        }
+    }
+
+    private void FinalizeCheckBox_CheckedChanged(object sender, EventArgs e)
+    {
+        if (Evolution != null && Evolution.Running)
+        {
+            Evolution.StopRequested = FinalizeCheckBox.Checked;
         }
     }
 }

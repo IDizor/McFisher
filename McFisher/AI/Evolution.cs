@@ -16,6 +16,7 @@ public class Evolution
     public AiBrain? BestMutant { get; private set; } = null;
     public List<Mutator> Mutators = new();
     public bool Running { get; private set; } = false;
+    public bool StopRequested { get; set; } = false;
 
     private Task? Task;
 
@@ -50,6 +51,7 @@ public class Evolution
         if (Task == null)
         {
             Running = true;
+            StopRequested = false;
 
             Task = Task.Factory.StartNew(() =>
             {
@@ -73,7 +75,7 @@ public class Evolution
                 int mutatorLimit = Config.GenerationPopulationLimit / Config.ThreadsCount;
 
                 // evolution loop
-                while (Running)
+                while (Running && !StopRequested)
                 {
                     Generation++;
                     int mutatedTotalWhenFound = 0;
@@ -185,6 +187,11 @@ public class Evolution
                     {
                         Running = false;
                     }
+                }
+
+                if (StopRequested)
+                {
+                    Running = false;
                 }
 
                 // ---------------------------------------------------------------------------
